@@ -2,12 +2,30 @@
 //
 // Builds leaderboards by crunching through the game history and computing
 // per-game averages for each player.
+// Tapping a game in the history list drills into its full box score.
 //
 // Props:
 //   games  — array of all completed game objects (from localStorage)
 //   onBack — go back to the home screen
 
+import { useState } from 'react'
+import BoxScore from './BoxScore'
+
 export default function SeasonDashboard({ games, onBack }) {
+  // When set to a game object, we show that game's box score instead of the dashboard.
+  // null = show the dashboard normally.
+  const [selectedGame, setSelectedGame] = useState(null)
+
+  // If a game is selected, render its box score.
+  // onBack clears the selection and returns to the dashboard.
+  if (selectedGame) {
+    return (
+      <BoxScore
+        game={selectedGame}
+        onBack={() => setSelectedGame(null)}
+      />
+    )
+  }
   // Empty state — no games yet
   if (games.length === 0) {
     return (
@@ -120,7 +138,12 @@ export default function SeasonDashboard({ games, onBack }) {
             .filter(p => p.team === 'B')
             .reduce((s, p) => s + p.stats.pts, 0)
           return (
-            <div key={game.id} className="history-row">
+            // Clicking a history row opens that game's full box score
+            <button
+              key={game.id}
+              className="history-row"
+              onClick={() => setSelectedGame(game)}
+            >
               <span className="history-date">
                 {new Date(game.startedAt).toLocaleDateString('en-GB', {
                   day: 'numeric', month: 'short'
@@ -129,7 +152,8 @@ export default function SeasonDashboard({ games, onBack }) {
               <span className="history-result">
                 {game.teamA} <strong>{scoreA}</strong> – <strong>{scoreB}</strong> {game.teamB}
               </span>
-            </div>
+              <span className="history-chevron">›</span>
+            </button>
           )
         })}
       </div>

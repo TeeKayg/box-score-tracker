@@ -458,7 +458,15 @@ body {
   justify-content: center;
 }
 
-/* The row of current stat totals */
+/* Small instruction line above the totals row */
+.modal-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* The row of current stat totals — each cell is now a button to subtract 1 */
 .stat-totals-row {
   display: flex;
   gap: 5px;
@@ -468,9 +476,23 @@ body {
 .stat-total-cell {
   flex: 1;
   background: var(--bg-input);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 7px 3px;
   text-align: center;
+  cursor: pointer;
+}
+
+/* When tapped, flash red to indicate removal */
+.stat-total-cell:active {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+/* Greyed out when already at 0 — can't go lower */
+.stat-total-cell:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 /* Uses the CSS variable --accent set inline per-cell */
@@ -812,8 +834,25 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
+  width: 100%;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.history-row:active {
+  opacity: 0.7;
+}
+
+.history-chevron {
+  color: var(--text-dim);
+  font-size: 18px;
+  margin-left: auto;
 }
 
 .history-date {

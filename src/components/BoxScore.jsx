@@ -15,7 +15,9 @@ import { useRef } from 'react'
 const STAT_COLS   = ['pts', 'ast', 'reb', 'stl', 'blk', 'to', 'fl']
 const STAT_LABELS = ['PTS', 'AST', 'REB', 'STL', 'BLK', 'TO',  'FL']
 
-export default function BoxScore({ game, onNewGame, onHome }) {
+// onBack is optional — passed when viewing a historical game from SeasonDashboard.
+// When present, we show a simple "Back" button instead of the post-game actions.
+export default function BoxScore({ game, onNewGame, onHome, onBack }) {
   // useRef gives us a direct reference to a DOM element.
   // We attach it to the score card div so html2canvas can screenshot it.
   const exportRef = useRef(null)
@@ -82,12 +84,23 @@ export default function BoxScore({ game, onNewGame, onHome }) {
         <button className="export-btn" onClick={handleExport}>
           Export as image
         </button>
-        <button className="new-game-btn" onClick={onNewGame}>
-          New game
-        </button>
-        <button className="text-link-btn" onClick={onHome}>
-          Back to home
-        </button>
+
+        {/* If opened from history, just show a back button.
+            Otherwise show the normal post-game options. */}
+        {onBack ? (
+          <button className="new-game-btn" onClick={onBack}>
+            ← Back to season
+          </button>
+        ) : (
+          <>
+            <button className="new-game-btn" onClick={onNewGame}>
+              New game
+            </button>
+            <button className="text-link-btn" onClick={onHome}>
+              Back to home
+            </button>
+          </>
+        )}
       </div>
 
     </div>

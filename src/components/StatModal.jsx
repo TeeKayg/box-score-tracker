@@ -1,7 +1,7 @@
 // StatModal.jsx — The bottom-sheet modal that slides up when you tap a player.
 //
 // Shows the player's current stat totals and a grid of +1 buttons.
-// Also has an "Undo" button that reverses the last action.
+// Tap a stat total to remove 1. Tap a +1 button to add 1.
 //
 // Props:
 //   player   — the player object (name, stats)
@@ -9,10 +9,6 @@
 //   onUpdate(stat, delta) — called to change a stat (+1 or -1)
 //   onClose  — called when the modal should close
 
-import { useState } from 'react'
-
-// The list of stats the modal tracks. Defined outside the component so it
-// doesn't get re-created on every render (it never changes).
 const STATS = [
   { key: 'pts', label: 'PTS', color: '#F5A623' },
   { key: 'ast', label: 'AST', color: '#4ADE80' },
@@ -24,34 +20,12 @@ const STATS = [
 ]
 
 export default function StatModal({ player, teamName, onUpdate, onClose }) {
-  // Track the last action so we can undo it.
-  // Shape: { stat: 'pts', delta: 1 } — or null if nothing to undo.
-  const [lastAction, setLastAction] = useState(null)
-
-  function handleUpdate(stat, delta) {
-    onUpdate(stat, delta)
-    setLastAction({ stat, delta })
-  }
-
-  function handleUndo() {
-    if (!lastAction) return
-    // Reverse the last delta (e.g. if we added +1, apply -1)
-    onUpdate(lastAction.stat, -lastAction.delta)
-    setLastAction(null)
-  }
-
   return (
-    // The backdrop fills the whole screen. Clicking it closes the modal.
     <div className="modal-backdrop" onClick={onClose}>
-
-      {/* The sheet itself. e.stopPropagation() prevents clicks inside the
-          sheet from also triggering the backdrop's onClick. */}
       <div className="modal-sheet" onClick={e => e.stopPropagation()}>
 
-        {/* Drag handle — purely visual, indicates it's a sheet */}
         <div className="modal-handle" />
 
-        {/* Header: player name + close button */}
         <div className="modal-header">
           <div>
             <div className="modal-team-label">{teamName}</div>
@@ -60,43 +34,38 @@ export default function StatModal({ player, teamName, onUpdate, onClose }) {
           <button className="modal-close-btn" onClick={onClose}>✕</button>
         </div>
 
-        {/* Current stat totals — the row of numbers at the top of the sheet */}
+        {/* Current stat totals — tap any number to subtract 1 */}
+        <p className="modal-hint">Tap number to remove · tap button to add</p>
         <div className="stat-totals-row">
           {STATS.map(s => (
-            <div
+            // Each total cell is a button. Tapping it subtracts 1 from that stat.
+            // disabled when the value is already 0 (can't go below zero)
+            <button
               key={s.key}
               className="stat-total-cell"
               style={{ '--accent': s.color }}
+              onClick={() => onUpdate(s.key, -1)}
+              disabled={player.stats[s.key] === 0}
             >
               <div className="total-value">{player.stats[s.key]}</div>
               <div className="total-label">{s.label}</div>
-            </div>
+            </button>
           ))}
         </div>
 
-        {/* +1 buttons — one per stat, plus an Undo */}
+        {/* +1 buttons — one per stat */}
         <div className="stat-btn-grid">
           {STATS.map(s => (
             <button
               key={s.key}
               className="stat-increment-btn"
               style={{ '--accent': s.color }}
-              onClick={() => handleUpdate(s.key, 1)}
+              onClick={() => onUpdate(s.key, 1)}
             >
               <span className="btn-plus">+1</span>
               <span className="btn-stat-label">{s.label}</span>
             </button>
           ))}
-
-          {/* Undo button — disabled if there's nothing to undo */}
-          <button
-            className="stat-increment-btn undo-btn"
-            onClick={handleUndo}
-            disabled={!lastAction}
-          >
-            <span className="btn-plus">−1</span>
-            <span className="btn-stat-label">Undo</span>
-          </button>
         </div>
 
       </div>
