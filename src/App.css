@@ -1,0 +1,917 @@
+/* App.css — All styles for the Box Score Tracker.
+ *
+ * Organised by section:
+ *   1. CSS variables (the design system — colours, spacing)
+ *   2. Global / reset
+ *   3. Screen layouts (each view)
+ *   4. Shared components (buttons, chips, tables)
+ *
+ * We use CSS custom properties (variables) so the whole colour palette
+ * is defined in one place. Change a variable here and it updates everywhere.
+ */
+
+/* ─────────────────────────────────────────────
+   1. DESIGN TOKENS
+   ───────────────────────────────────────────── */
+:root {
+  /* Backgrounds — dark navy palette */
+  --bg-primary:   #090D18;   /* deepest background */
+  --bg-surface:   #0C1020;   /* slightly lighter, used for list rows */
+  --bg-elevated:  #111527;   /* modals, cards */
+  --bg-input:     #141828;   /* inputs and stat buttons */
+
+  /* Accent colours — each maps to a stat category */
+  --color-amber:  #F5A623;   /* Team A / points */
+  --color-green:  #4ADE80;   /* Team B / assists */
+  --color-blue:   #60A5FA;   /* rebounds */
+  --color-purple: #A78BFA;   /* steals */
+  --color-teal:   #34D399;   /* blocks */
+  --color-red:    #F87171;   /* turnovers */
+  --color-orange: #FB923C;   /* fouls */
+
+  /* Text colours */
+  --text-primary:   #FFFFFF;
+  --text-secondary: #9CA3AF;
+  --text-muted:     #6B7280;
+  --text-dim:       #374151;
+
+  /* Borders */
+  --border:         rgba(255, 255, 255, 0.07);
+  --border-strong:  rgba(255, 255, 255, 0.12);
+
+  /* Spacing scale */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  14px;
+  --space-lg:  20px;
+  --space-xl:  32px;
+
+  /* Rounded corners */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  20px;
+}
+
+/* ─────────────────────────────────────────────
+   2. GLOBAL / RESET
+   ───────────────────────────────────────────── */
+
+/* Box-sizing: include padding and border in element sizes.
+   Without this, padding adds to the width, which causes layout surprises. */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  /* Prevent tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The root div that wraps everything */
+.app {
+  min-height: 100vh;
+  max-width: 480px;   /* keeps it readable on wide screens */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Utility colour classes used across components */
+.score-a { color: var(--color-amber); }
+.score-b { color: var(--color-green); }
+
+/* ─────────────────────────────────────────────
+   3a. HOME SCREEN
+   ───────────────────────────────────────────── */
+
+.home-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-xl);
+  text-align: center;
+  gap: var(--space-sm);
+}
+
+.home-logo {
+  font-size: 56px;
+  margin-bottom: var(--space-sm);
+}
+
+.home-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.home-sub {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: var(--space-lg);
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+  max-width: 280px;
+}
+
+/* ─────────────────────────────────────────────
+   3b. GAME SETUP SCREEN
+   ───────────────────────────────────────────── */
+
+.setup-screen {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md) var(--space-md) var(--space-xl);
+  gap: var(--space-md);
+  min-height: 100vh;
+}
+
+.setup-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.setup-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.team-name-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.team-name-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: center;
+  outline: none;
+}
+
+.team-name-input.input-a:focus { border-color: var(--color-amber); }
+.team-name-input.input-b:focus { border-color: var(--color-green); }
+
+.vs-divider {
+  color: var(--text-dim);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.setup-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.player-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.group-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.label-a    { color: var(--color-amber); }
+.label-b    { color: var(--color-green); }
+.label-none { color: var(--text-dim); }
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/* Player assignment chips */
+.player-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: opacity 0.15s;
+}
+
+.player-chip:active { opacity: 0.7; }
+
+.chip-a    { background: rgba(245,166,35,0.12);  color: var(--color-amber);  border-color: rgba(245,166,35,0.3); }
+.chip-b    { background: rgba(74,222,128,0.12);  color: var(--color-green);  border-color: rgba(74,222,128,0.3); }
+.chip-none { background: var(--bg-input);        color: var(--text-muted);   border-color: var(--border); }
+
+.add-player-row {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.add-player-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.add-player-input:focus {
+  border-color: var(--border-strong);
+}
+
+.add-player-input::placeholder { color: var(--text-dim); }
+
+.add-player-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 14px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────
+   3c. LIVE TRACKER SCREEN
+   ───────────────────────────────────────────── */
+
+.tracker-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-primary);
+}
+
+/* The score banner at the top */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 20px 16px 12px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+}
+
+.score-side {
+  text-align: center;
+}
+
+.score-team-name {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.score-pts {
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.score-sep {
+  color: var(--text-dim);
+  font-size: 28px;
+  margin-top: 12px;
+}
+
+.player-lists {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 0 80px;  /* space for the fixed footer */
+}
+
+.team-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px 5px;
+}
+
+.player-list-group {
+  background: var(--bg-surface);
+}
+
+/* A single player row in the tracker */
+.player-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 11px 14px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.player-row:hover,
+.player-row:active {
+  background: rgba(255,255,255,0.04);
+}
+
+.player-row-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Small inline stat badges on each player row */
+.stat-chip {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.07);
+  padding: 2px 5px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+.row-chevron {
+  color: var(--text-dim);
+  font-size: 18px;
+  margin-left: 6px;
+  line-height: 1;
+}
+
+/* Fixed-position footer with the End game button */
+.tracker-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 14px 24px;
+  background: linear-gradient(to top, var(--bg-primary) 70%, transparent);
+}
+
+.end-game-btn {
+  width: 100%;
+  padding: 13px;
+  background: rgba(245,166,35,0.1);
+  border: 1px solid rgba(245,166,35,0.25);
+  border-radius: var(--radius-lg);
+  color: var(--color-amber);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.end-game-btn:active {
+  background: rgba(245,166,35,0.18);
+}
+
+/* ─────────────────────────────────────────────
+   3d. STAT MODAL
+   ───────────────────────────────────────────── */
+
+/* Semi-transparent overlay that covers the whole screen */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;                        /* shorthand for top/right/bottom/left: 0 */
+  background: rgba(9,13,24,0.8);
+  display: flex;
+  align-items: flex-end;           /* push the sheet to the bottom */
+  z-index: 100;
+}
+
+/* The white(-ish) sheet that slides up from the bottom */
+.modal-sheet {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 14px 14px 32px;
+}
+
+/* The little bar at the top of the sheet — purely decorative */
+.modal-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  margin: 0 auto 14px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-team-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.modal-player-name {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  border: none;
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The row of current stat totals */
+.stat-totals-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.stat-total-cell {
+  flex: 1;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  padding: 7px 3px;
+  text-align: center;
+}
+
+/* Uses the CSS variable --accent set inline per-cell */
+.total-value {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--accent, var(--text-primary));
+}
+
+.total-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* Grid of +1 buttons — 4 columns */
+.stat-btn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.stat-increment-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  padding: 12px 6px;
+  text-align: center;
+  transition: background 0.1s;
+}
+
+.stat-increment-btn:active {
+  background: rgba(255,255,255,0.08);
+  transform: scale(0.97);
+}
+
+.stat-increment-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Uses --accent variable set inline per-button */
+.btn-plus {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--accent, var(--text-primary));
+}
+
+.btn-stat-label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Undo button — slightly different styling */
+.undo-btn {
+  background: rgba(248,113,113,0.07);
+  border-color: rgba(248,113,113,0.15);
+  --accent: #F87171;
+}
+
+/* ─────────────────────────────────────────────
+   3e. BOX SCORE SCREEN
+   ───────────────────────────────────────────── */
+
+.boxscore-screen {
+  min-height: 100vh;
+  padding: 0 0 var(--space-xl);
+}
+
+/* The card that html2canvas screenshots */
+.export-card {
+  background: var(--bg-primary);
+  padding: var(--space-md);
+}
+
+.bs-header {
+  text-align: center;
+  padding: var(--space-md) 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-md);
+}
+
+.game-over-tag {
+  font-size: 11px;
+  color: var(--color-green);
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.bs-final-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-bottom: 6px;
+}
+
+.bs-final-side {
+  text-align: center;
+}
+
+.bs-final-team {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bs-final-pts {
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.bs-sep {
+  color: var(--text-dim);
+  font-size: 24px;
+  margin-top: 10px;
+}
+
+.bs-date {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.bs-table-section {
+  margin-bottom: var(--space-md);
+}
+
+.bs-team-heading {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 4px 5px;
+}
+
+/* The actual stats table */
+.bs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  /* table-layout: fixed makes column widths predictable */
+  table-layout: fixed;
+}
+
+.bs-th {
+  text-align: center;
+  color: var(--text-dim);
+  font-weight: 400;
+  padding: 3px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.bs-player-th {
+  text-align: left;
+  width: 90px;
+}
+
+.bs-row {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.bs-td {
+  text-align: center;
+  padding: 6px 4px;
+  color: var(--text-secondary);
+}
+
+.bs-player-td {
+  text-align: left;
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Points column gets the team accent colour */
+.bs-stat-td.score-a { color: var(--color-amber); font-weight: 600; }
+.bs-stat-td.score-b { color: var(--color-green); font-weight: 600; }
+
+.bs-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-md) 0;
+}
+
+.export-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-amber);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #0D0900;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.export-btn:active {
+  opacity: 0.85;
+}
+
+.new-game-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────
+   3f. SEASON DASHBOARD SCREEN
+   ───────────────────────────────────────────── */
+
+.season-screen {
+  min-height: 100vh;
+  padding: 0 0 var(--space-xl);
+}
+
+.season-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--border);
+}
+
+.season-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.empty-state {
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.season-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.meta-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.meta-value {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.meta-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* A single leaderboard section */
+.leaderboard-section {
+  padding: var(--space-md) var(--space-md) 0;
+}
+
+.lb-heading {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.lb-rank {
+  font-size: 12px;
+  font-weight: 600;
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.lb-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.lb-avg {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lb-unit {
+  font-size: 11px;
+  color: var(--text-dim);
+  width: 28px;
+}
+
+/* Game history at the bottom of the season screen */
+.game-history {
+  padding: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.history-heading {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-date {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.history-result {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.history-result strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────
+   4. SHARED COMPONENTS
+   ───────────────────────────────────────────── */
+
+/* Back button — used on Setup, Season, etc. */
+.back-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 0;
+  flex-shrink: 0;
+}
+
+.back-btn:hover { color: var(--text-primary); }
+
+/* Primary CTA button (orange) */
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-amber);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #0D0900;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primary-btn:active { opacity: 0.85; }
+
+/* Secondary button (dark, outlined) */
+.secondary-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-secondary);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Small badge on the secondary button showing game count */
+.game-count-badge {
+  font-size: 11px;
+  background: rgba(255,255,255,0.1);
+  color: var(--text-muted);
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+
+/* Start game button on setup screen */
+.start-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--color-amber);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: #0D0900;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: auto;  /* push to the bottom of the flex column */
+}
+
+.start-btn:active { opacity: 0.85; }
+
+/* Plain text link button */
+.text-link-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px;
+}

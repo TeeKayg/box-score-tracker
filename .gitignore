@@ -1,0 +1,8 @@
+# .gitignore — tells Git which files to NOT track.
+#
+# node_modules contains all the installed packages (can be hundreds of MB).
+# We don't commit this because anyone can recreate it with `npm install`.
+# Only our actual source code goes to GitHub.
+node_modules
+dist
+.DS_Store
