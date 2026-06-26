@@ -9,15 +9,9 @@
 //   onUpdate(stat, delta) — called to change a stat (+1 or -1)
 //   onClose  — called when the modal should close
 
-const STATS = [
-  { key: 'pts', label: 'PTS', color: '#F5A623' },
-  { key: 'ast', label: 'AST', color: '#4ADE80' },
-  { key: 'reb', label: 'REB', color: '#60A5FA' },
-  { key: 'stl', label: 'STL', color: '#A78BFA' },
-  { key: 'blk', label: 'BLK', color: '#34D399' },
-  { key: 'to',  label: 'TO',  color: '#F87171' },
-  { key: 'fl',  label: 'FL',  color: '#FB923C' },
-]
+import { STAT_KEYS, STAT_COLORS, STAT_LABELS } from '../data/statColors'
+
+const STATS = STAT_KEYS.map(key => ({ key, label: STAT_LABELS[key], color: STAT_COLORS[key] }))
 
 export default function StatModal({ player, teamName, onUpdate, onClose }) {
   return (

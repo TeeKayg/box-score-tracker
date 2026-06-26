@@ -4,18 +4,16 @@
 // You can add one-off players during setup too.
 
 export const DEFAULT_PLAYERS = [
-  'Marcus J.',
-  'Devon R.',
-  'Jamal T.',
-  'Chris M.',
-  'Andre W.',
-  'Tyler B.',
-  'Jason K.',
-  'Darius N.',
-  'Kyle S.',
-  'Malik O.',
-  'Terrell H.',
-  'Brandon F.',
+  'Kadz',
+  'Bilz',
+  'Jibz',
+  'TeeKay',
+  'Tallman',
+  'Mo Has',
+  'Anwar',
+  'Yusuf',
+  'Hirey',
+  'Tallman Jr',
 ]
 
 // Returns a fresh stats object — all zeros.

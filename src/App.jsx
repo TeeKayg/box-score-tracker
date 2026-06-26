@@ -77,6 +77,13 @@ function App() {
     }))
   }
 
+  // Called by SeasonDashboard when the user deletes a past game.
+  // Removing it from 'games' automatically updates every leaderboard and
+  // total on the season screen, since they're all derived from this array.
+  function handleDeleteGame(gameId) {
+    setGames(prev => prev.filter(game => game.id !== gameId))
+  }
+
   // Called by LiveTracker when the user taps "End game"
   function handleEndGame() {
     const completedGame = {
@@ -129,6 +136,7 @@ function App() {
         <SeasonDashboard
           games={games}
           onBack={() => setView('home')}
+          onDeleteGame={handleDeleteGame}
         />
       )}
     </div>

@@ -9,7 +9,13 @@
 export default function Home({ onNewGame, onViewSeason, gameCount }) {
   return (
     <div className="home-screen">
-      <div className="home-logo">🏀</div>
+      <div className="home-logo">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.5" stroke="var(--color-amber)" strokeWidth="1.6" />
+          <path d="M12 2.5v19M2.5 12h19" stroke="var(--color-amber)" strokeWidth="1.6" />
+          <path d="M4.6 5.4c2 1.9 3.2 4.4 3.2 6.6s-1.2 4.7-3.2 6.6M19.4 5.4c-2 1.9-3.2 4.4-3.2 6.6s1.2 4.7 3.2 6.6" stroke="var(--color-amber)" strokeWidth="1.6" />
+        </svg>
+      </div>
       <h1 className="home-title">Box Score Tracker</h1>
       <p className="home-sub">Track stats. Build the season.</p>
 

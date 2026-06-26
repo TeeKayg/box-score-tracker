@@ -10,10 +10,11 @@
 //   onHome    — go back to the home screen
 
 import { useRef } from 'react'
+import { STAT_KEYS, STAT_COLORS, STAT_LABELS as STAT_LABEL_MAP } from '../data/statColors'
 
 // The stat columns to show in the table, in order
-const STAT_COLS   = ['pts', 'ast', 'reb', 'stl', 'blk', 'to', 'fl']
-const STAT_LABELS = ['PTS', 'AST', 'REB', 'STL', 'BLK', 'TO',  'FL']
+const STAT_COLS   = STAT_KEYS
+const STAT_LABELS = STAT_KEYS.map(key => STAT_LABEL_MAP[key])
 
 // onBack is optional — passed when viewing a historical game from SeasonDashboard.
 // When present, we show a simple "Back" button instead of the post-game actions.
@@ -26,6 +27,8 @@ export default function BoxScore({ game, onNewGame, onHome, onBack }) {
   const teamBPlayers = game.players.filter(p => p.team === 'B')
   const scoreA = teamAPlayers.reduce((sum, p) => sum + p.stats.pts, 0)
   const scoreB = teamBPlayers.reduce((sum, p) => sum + p.stats.pts, 0)
+  // null when tied — no winner badge shown in that case
+  const winner = scoreA === scoreB ? null : scoreA > scoreB ? 'A' : 'B'
 
   // Export the score card as a PNG image
   async function handleExport() {
@@ -56,13 +59,19 @@ export default function BoxScore({ game, onNewGame, onHome, onBack }) {
         <div className="bs-header">
           <div className="game-over-tag">FINAL</div>
           <div className="bs-final-score">
-            <div className="bs-final-side">
-              <div className="bs-final-team">{game.teamA}</div>
+            <div className={`bs-final-side${winner === 'A' ? ' is-winner' : ''}`}>
+              <div className="bs-final-team">
+                {game.teamA}
+                {winner === 'A' && <span className="winner-badge score-a">W</span>}
+              </div>
               <div className="bs-final-pts score-a">{scoreA}</div>
             </div>
             <div className="bs-sep">–</div>
-            <div className="bs-final-side">
-              <div className="bs-final-team">{game.teamB}</div>
+            <div className={`bs-final-side${winner === 'B' ? ' is-winner' : ''}`}>
+              <div className="bs-final-team">
+                {game.teamB}
+                {winner === 'B' && <span className="winner-badge score-b">W</span>}
+              </div>
               <div className="bs-final-pts score-b">{scoreB}</div>
             </div>
           </div>
@@ -74,8 +83,8 @@ export default function BoxScore({ game, onNewGame, onHome, onBack }) {
         </div>
 
         {/* Box score tables — one per team */}
-        <BoxScoreTable players={teamAPlayers} teamName={game.teamA} ptsClass="score-a" />
-        <BoxScoreTable players={teamBPlayers} teamName={game.teamB} ptsClass="score-b" />
+        <BoxScoreTable players={teamAPlayers} teamName={game.teamA} ptsClass="score-a" accent="var(--color-amber)" isWinner={winner === 'A'} />
+        <BoxScoreTable players={teamBPlayers} teamName={game.teamB} ptsClass="score-b" accent="var(--color-green)" isWinner={winner === 'B'} />
 
       </div>
 
@@ -110,16 +119,18 @@ export default function BoxScore({ game, onNewGame, onHome, onBack }) {
 // ── BoxScoreTable ──
 // Renders a single team's stats as a table.
 // 'ptsClass' is used to colour the points column (amber for A, green for B).
-function BoxScoreTable({ players, teamName, ptsClass }) {
+function BoxScoreTable({ players, teamName, ptsClass, accent, isWinner }) {
   return (
-    <div className="bs-table-section">
+    <div className={`bs-table-section${isWinner ? ' is-winner' : ''}`} style={{ '--accent': accent }}>
       <div className="bs-team-heading">{teamName}</div>
       <table className="bs-table">
         <thead>
           <tr>
             <th className="bs-th bs-player-th">Player</th>
-            {STAT_LABELS.map(label => (
-              <th key={label} className="bs-th">{label}</th>
+            {STAT_COLS.map((stat, i) => (
+              <th key={stat} className="bs-th" style={{ color: stat === 'pts' ? undefined : STAT_COLORS[stat] }}>
+                {STAT_LABELS[i]}
+              </th>
             ))}
           </tr>
         </thead>
